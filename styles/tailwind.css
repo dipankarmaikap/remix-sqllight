@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body{
+    @apply text-gray-800 bg-gray-100
+  }
+
+  h1{
+    @apply text-3xl font-bold;
+  }
+}
+@layer components {
+  .custom-class {
+    @apply text-green-500;
+  }
+}
