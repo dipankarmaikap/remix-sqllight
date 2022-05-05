@@ -2,7 +2,6 @@ import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { useRef, useEffect } from "react";
-
 import { createLog } from "~/models/log.server";
 import { requireUserId } from "~/session.server";
 

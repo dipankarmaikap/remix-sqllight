@@ -2,11 +2,11 @@ import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useCatch, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
-
 import type { Log } from "~/models/log.server";
 import { deleteLog } from "~/models/log.server";
 import { getLog } from "~/models/log.server";
 import { requireUserId } from "~/session.server";
+import { generateLocalTime } from "~/utils";
 
 type LoaderData = {
   log: Log;
@@ -34,8 +34,8 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 export default function NoteDetailsPage() {
   const data = useLoaderData() as LoaderData;
-  let datetime = new Date(data.log.datetime).toLocaleString();
-  let end_datetime = new Date(data.log.end_datetime).toLocaleString();
+  let datetime = generateLocalTime(data.log.datetime);
+  let end_datetime = generateLocalTime(data.log.end_datetime);
 
   return (
     <div>
