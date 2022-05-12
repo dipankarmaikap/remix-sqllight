@@ -17,3 +17,10 @@ email: `hello@dipankarmaikap.com`
 password: `notsecurepassword`
 
 Or you can create your own account.
+
+
+Explore the app now you can also filter the list on logs page by 4 attributes, All sorting is done serverside.
+
+
+
+
