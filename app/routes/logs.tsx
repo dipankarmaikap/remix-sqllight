@@ -1,24 +1,35 @@
-import type { LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { LoaderFunction, ActionFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
-
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
 import { getLogListItems } from "~/models/log.server";
+import { useRef } from "react";
 
 type LoaderData = {
   logListItems: Awaited<ReturnType<typeof getLogListItems>>;
+  sort_by: string | null;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
-  const logListItems = await getLogListItems({ userId });
-  return json<LoaderData>({ logListItems });
-};
+  const url = new URL(request.url);
+  const sort_by = url.searchParams.get("sort_by");
+  console.log({ sort_by });
 
-export default function NotesPage() {
+  const logListItems = await getLogListItems({ userId, sort_by });
+  return json<LoaderData>({ logListItems, sort_by });
+};
+export const action: ActionFunction = async ({ request }) => {
+  let formData = await request.formData();
+  let sort_by = formData.get("sort_by");
+  console.log({ sort_by });
+  return redirect("/logs?sort_by=" + sort_by);
+};
+export default function LogsPage() {
   const data = useLoaderData() as LoaderData;
   const user = useUser();
+  const formRef = useRef<HTMLFormElement>(null);
 
   return (
     <div className="flex h-full min-h-screen flex-col">
@@ -39,12 +50,26 @@ export default function NotesPage() {
 
       <main className="flex h-full bg-white">
         <div className="h-full w-80 border-r bg-gray-50">
-          <Link to="new" className="block p-4 text-xl text-blue-500">
-            + New Log Entry
-          </Link>
-
+          <div className=" flex items-center justify-between mr-4">
+            <Link to="new" className="block p-4 text-xl text-blue-500">
+              + New Log Entry
+            </Link>
+            <Form ref={formRef}>
+              <select
+                className="border px-2 py-1"
+                name="sort_by"
+                id="sort_by"
+                defaultValue={data.sort_by ?? "datetime"}
+                onChange={() => formRef.current?.submit()}
+              >
+                <option value="datetime">Start At</option>
+                <option value="end_datetime">End At</option>
+                <option value="createdAt">Created At</option>
+                <option value="updatedAt">Updated At</option>
+              </select>
+            </Form>
+          </div>
           <hr />
-
           {data.logListItems.length === 0 ? (
             <p className="p-4">No logs yet</p>
           ) : (

@@ -32,7 +32,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   return redirect("/logs");
 };
 
-export default function NoteDetailsPage() {
+export default function LogDetailsPage() {
   const data = useLoaderData() as LoaderData;
   let datetime = generateLocalTime(data.log.datetime);
   let end_datetime = generateLocalTime(data.log.end_datetime);

@@ -1,5 +1,4 @@
 import type { User, Log } from "@prisma/client";
-
 import { prisma } from "~/db.server";
 
 export type { Log } from "@prisma/client";
@@ -15,11 +14,19 @@ export function getLog({
   });
 }
 
-export function getLogListItems({ userId }: { userId: User["id"] }) {
+export function getLogListItems({
+  userId,
+  sort_by,
+}: {
+  userId: User["id"];
+  sort_by: string | null;
+}) {
+  const orderBy = { [sort_by ?? "datetime"]: "desc" };
+
   return prisma.log.findMany({
     where: { userId },
     select: { id: true, datetime: true },
-    orderBy: { updatedAt: "desc" },
+    orderBy,
   });
 }
 
